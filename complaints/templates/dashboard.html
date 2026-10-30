@@ -1,0 +1,472 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Authority Dashboard | CivicTrack AI</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        header {
+            background: #123b65;
+            color: white;
+            padding: 22px 35px;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0000000a;
+        }
+
+        .stat-card h3 {
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .stat-card p {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .map-container {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        #complaint-map {
+            height: 430px;
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .map-help {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .table-container {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 950px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        select, input {
+            padding: 9px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            margin-bottom: 7px;
+            width: 150px;
+        }
+
+        button {
+            padding: 9px 15px;
+            background: #1769d2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1255ad;
+        }
+
+        .priority {
+            font-weight: bold;
+        }
+
+        .critical, .high {
+            color: #dc2626;
+        }
+
+        .medium {
+            color: #d97706;
+        }
+
+        .low {
+            color: #15803d;
+        }
+
+        .duplicate {
+            color: #b45309;
+        }
+
+        @media(max-width: 600px) {
+            header {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+
+            #complaint-map {
+                height: 320px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>CivicTrack AI | Authority Dashboard</h2>
+</header>
+
+<div class="container">
+
+    <h1>Complaint Management</h1>
+
+    <p>Monitor and manage citizen complaints.</p>
+
+    <!-- Dashboard Statistics -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+            <h3>Total Complaints</h3>
+            <p>{{ total_complaints }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Pending Complaints</h3>
+            <p>{{ pending_complaints }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>High / Critical Priority</h3>
+            <p>{{ high_priority }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Resolved Complaints</h3>
+            <p>{{ resolved_complaints }}</p>
+        </div>
+
+    </section>
+
+    <!-- Interactive Complaint Map -->
+
+    <section class="map-container">
+
+        <h2>Complaint Locations</h2>
+
+        <p class="map-help">
+            View reported civic issues on the map.
+            Click a marker to view complaint information.
+        </p>
+
+        <div id="complaint-map"></div>
+
+        <p class="map-help" id="map-message"></p>
+
+    </section>
+
+    <!-- Complaint Data for Map -->
+
+    <div id="complaint-map-data" hidden>
+
+        {% for complaint in complaints %}
+
+            {% if complaint.latitude != None and complaint.longitude != None %}
+
+                <div class="map-point"
+                     data-title="{{ complaint.title }}"
+                     data-category="{{ complaint.category }}"
+                     data-priority="{{ complaint.priority }}"
+                     data-status="{{ complaint.status }}"
+                     data-location="{{ complaint.location }}"
+                     data-latitude="{{ complaint.latitude }}"
+                     data-longitude="{{ complaint.longitude }}"
+                     data-tracking="{{ complaint.tracking_id }}">
+
+                </div>
+
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+    <!-- All Citizen Complaints -->
+
+    <section class="table-container">
+
+        <h2>All Citizen Complaints</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Complaint</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Location</th>
+                    <th>Department</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for complaint in complaints %}
+
+                <tr>
+
+                    <td>
+                        <strong>{{ complaint.title }}</strong>
+                        <br>
+                        <small>{{ complaint.tracking_id }}</small>
+                        <br>
+                        <small>{{ complaint.ai_summary }}</small>
+
+                        {% if complaint.duplicate_of %}
+                            <br>
+                            <small class="duplicate">
+                                Possible duplicate
+                            </small>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ complaint.category }}</td>
+
+                    <td class="priority {{ complaint.priority|lower }}">
+                        {{ complaint.priority }}
+                    </td>
+
+                    <td>{{ complaint.location }}</td>
+
+                    <td>
+                        {{ complaint.assigned_department|default:"Not assigned" }}
+                    </td>
+
+                    <td>{{ complaint.status }}</td>
+
+                    <td>
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="complaint_id"
+                                value="{{ complaint.tracking_id }}"
+                            >
+
+                            <select name="status">
+
+                                {% for value, label in complaint.STATUS_CHOICES %}
+
+                                    <option
+                                        value="{{ value }}"
+                                        {% if complaint.status == value %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ label }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                            <input
+                                type="text"
+                                name="assigned_department"
+                                placeholder="Department"
+                                value="{{ complaint.assigned_department }}"
+                            >
+
+                            <button type="submit">
+                                Update
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="7">
+                        No complaints have been submitted yet.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+</div>
+
+<!-- Leaflet JavaScript -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+    // Initialize the map
+
+    const map = L.map('complaint-map').setView(
+        [20.5937, 78.9629],
+        5
+    );
+
+    // Load OpenStreetMap
+
+    L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+            attribution: '&copy; OpenStreetMap contributors'
+        }
+    ).addTo(map);
+
+    const markers = [];
+
+    const complaintPoints = document.querySelectorAll('.map-point');
+
+    // Display complaints as markers
+
+    complaintPoints.forEach(function(point) {
+
+        const latitude = Number(point.dataset.latitude);
+        const longitude = Number(point.dataset.longitude);
+
+        if (!Number.isFinite(latitude) ||
+            !Number.isFinite(longitude) ||
+            latitude < -90 || latitude > 90 ||
+            longitude < -180 || longitude > 180) {
+            return;
+        }
+
+        const marker = L.marker([
+            latitude,
+            longitude
+        ]).addTo(map);
+
+        // Create safe popup content
+
+        const popup = document.createElement('div');
+
+        function addDetail(label, value) {
+
+            const paragraph = document.createElement('p');
+            const strong = document.createElement('strong');
+
+            strong.textContent = label + ': ';
+
+            paragraph.appendChild(strong);
+            paragraph.appendChild(
+                document.createTextNode(value)
+            );
+
+            popup.appendChild(paragraph);
+        }
+
+        const heading = document.createElement('h3');
+        heading.textContent = point.dataset.title;
+        popup.appendChild(heading);
+
+        addDetail('Category', point.dataset.category);
+        addDetail('Priority', point.dataset.priority);
+        addDetail('Status', point.dataset.status);
+        addDetail('Location', point.dataset.location);
+        addDetail('Tracking ID', point.dataset.tracking);
+
+        marker.bindPopup(popup);
+
+        markers.push(marker);
+
+    });
+
+    // Adjust map to show all complaint markers
+
+    const mapMessage = document.getElementById('map-message');
+
+    if (markers.length > 0) {
+
+        const markerGroup = L.featureGroup(markers);
+
+        map.fitBounds(
+            markerGroup.getBounds(),
+            { padding: [40, 40], maxZoom: 14 }
+        );
+
+        mapMessage.textContent =
+            markers.length + ' complaint location(s) displayed on the map.';
+
+    } else {
+
+        mapMessage.textContent =
+            'No complaints have valid map coordinates yet.';
+
+    }
+
+</script>
+
+</body>
+</html>

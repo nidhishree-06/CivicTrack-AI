@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Submitted | CivicTrack AI</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px 15px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .success {
+            text-align: center;
+            color: #16803c;
+        }
+
+        .tracking {
+            background: #eef4ff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            overflow-wrap: anywhere;
+        }
+
+        .detail {
+            border-bottom: 1px solid #eee;
+            padding: 12px 0;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .priority {
+            font-weight: bold;
+        }
+
+        .reason {
+            background: #fff8e7;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="success">
+        <h1>✓ Complaint Submitted!</h1>
+        <p>Your complaint has been successfully registered.</p>
+    </div>
+
+    <div class="tracking">
+        <p class="label">Your Complaint Tracking ID</p>
+        <strong>{{ complaint.tracking_id }}</strong>
+        <p>Save this ID to track your complaint.</p>
+    </div>
+
+    <h2>AI Analysis Results</h2>
+
+    <div class="detail">
+        <span class="label">Complaint Title:</span>
+        {{ complaint.title }}
+    </div>
+
+    <div class="detail">
+        <span class="label">Detected Category:</span>
+        {{ complaint.category }}
+    </div>
+
+    <div class="detail">
+        <span class="label">AI Summary:</span>
+        {{ complaint.ai_summary }}
+    </div>
+
+    <div class="detail">
+        <span class="label">Priority:</span>
+        <span class="priority">{{ complaint.priority }}</span>
+    </div>
+
+    <div class="reason">
+        <span class="label">Why this priority?</span>
+        <p>{{ complaint.priority_reason }}</p>
+    </div>
+
+    <div class="detail">
+        <span class="label">Assigned Department:</span>
+        {{ complaint.assigned_department|default:"Not assigned yet" }}
+    </div>
+
+    {% if complaint.duplicate_of %}
+        <div class="reason">
+            <strong>Possible Duplicate Detected</strong>
+            <p>This complaint may be similar to an existing complaint.</p>
+            <p>Related Tracking ID: {{ complaint.duplicate_of.tracking_id }}</p>
+        </div>
+    {% else %}
+        <div class="detail">
+            <span class="label">Duplicate Check:</span>
+            No likely duplicate found.
+        </div>
+    {% endif %}
+
+    <a href="/track/" class="button">Track Your Complaint</a>
+
+    <a href="/report/" class="button">Submit Another Complaint</a>
+
+</div>
+
+</body>
+</html>

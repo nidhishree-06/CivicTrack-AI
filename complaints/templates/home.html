@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicTrack AI | Home</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+        }
+
+        header {
+            background: #123b65;
+            color: white;
+            padding: 22px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 { margin: 0; }
+
+        header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .hero {
+            padding: 75px 20px;
+            text-align: center;
+            background: #e6f1ff;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            line-height: 1.7;
+            max-width: 650px;
+            margin: 0 auto 28px;
+        }
+
+        .button {
+            display: inline-block;
+            background: #1769d2;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 22px;
+            flex-wrap: wrap;
+            padding: 45px 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 260px;
+            box-shadow: 0 4px 15px #0000000d;
+        }
+
+        footer {
+            text-align: center;
+            padding: 22px;
+            color: #64748b;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 32px; }
+            header { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>CivicTrack AI</h2>
+        <a href="/admin/">Authority Login</a>
+    </header>
+
+    <section class="hero">
+        <h1>Report a Problem. Improve Your Community.</h1>
+        <p>
+            Report road damage, waterlogging, overflowing garbage
+            and other civic issues. Track your complaint as action
+            is taken.
+        </p>
+        <a class="button" href="/report/">Report an Issue</a>
+    </section>
+
+    <section class="features">
+        <div class="card">
+            <h3>Easy Reporting</h3>
+            <p>Submit a civic complaint with its location and description.</p>
+        </div>
+
+        <div class="card">
+            <h3>AI-Powered Analysis</h3>
+            <p>Identify duplicate reports and help prioritize urgent issues.</p>
+        </div>
+
+        <div class="card">
+            <h3>Track Progress</h3>
+            <p>Follow your complaint from submission to resolution.</p>
+        </div>
+    </section>
+
+    <footer>
+        CivicTrack AI | Smart Citizen Complaint Management
+    </footer>
+</body>
+</html>
