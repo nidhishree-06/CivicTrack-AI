@@ -1,224 +1,186 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'base.html' %}
 
-    <title>Report an Issue | CivicTrack AI</title>
+{% block title %}Report an Issue | CivicTrack AI{% endblock %}
 
-    <!-- Leaflet Map CSS -->
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    >
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+{% endblock %}
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+{% block content %}
 
-        body {
-            margin: 0;
-            padding: 30px 15px;
-            background: #f4f7fb;
-            font-family: Arial, sans-serif;
-            color: #1e293b;
-        }
+<section class="report-page">
 
-        .form-card {
-            max-width: 650px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 14px;
-            box-shadow: 0 5px 22px #00000010;
-        }
+    <div class="report-heading">
+        <span class="report-tag">CITIZEN SERVICES</span>
 
-        h1 {
-            color: #123b65;
-        }
+        <h1>Report a Civic Issue</h1>
 
-        label {
-            display: block;
-            font-weight: bold;
-            margin: 18px 0 8px;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            font: inherit;
-        }
-
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        #map {
-            height: 350px;
-            width: 100%;
-            margin-top: 12px;
-            border-radius: 10px;
-            border: 1px solid #cbd5e1;
-        }
-
-        .location-btn {
-            background: #0f766e;
-            color: white;
-            border: none;
-            padding: 11px 15px;
-            margin-top: 12px;
-            border-radius: 7px;
-            cursor: pointer;
-        }
-
-        .map-help {
-            color: #64748b;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        #coordinate-status {
-            color: #15803d;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-
-        button[type="submit"] {
-            width: 100%;
-            padding: 14px;
-            margin-top: 24px;
-            background: #1769d2;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .back {
-            color: #1769d2;
-        }
-
-        .error {
-            color: #b91c1c;
-            margin-top: 15px;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="form-card">
-
-    <a class="back" href="/">← Back to Home</a>
-
-    <h1>Report a Civic Issue</h1>
-
-    <p>Provide the details below so the issue can be reviewed.</p>
-
-    <form method="post" id="complaint-form">
-
-        {% csrf_token %}
-
-        <label for="title">Complaint Title</label>
-
-        <input
-            id="title"
-            name="title"
-            maxlength="200"
-            placeholder="Example: Large pothole near bus stop"
-            required
-        >
-
-        <label for="description">Describe the Problem</label>
-
-        <textarea
-            id="description"
-            name="description"
-            placeholder="Explain what happened and its impact"
-            required
-        ></textarea>
-
-        <label for="category">Category</label>
-
-        <select id="category" name="category" required>
-
-            <option value="">Select a category</option>
-            <option value="Road Damage">Road Damage</option>
-            <option value="Waterlogging">Waterlogging</option>
-            <option value="Garbage">Garbage</option>
-            <option value="Streetlight">Streetlight</option>
-            <option value="Drainage">Drainage</option>
-            <option value="Other">Other</option>
-
-        </select>
-
-        <label for="location">Location or Address</label>
-
-        <input
-            id="location"
-            name="location"
-            placeholder="Example: Near the main bus stop"
-            maxlength="255"
-            required
-        >
-
-        <label>Select Complaint Location on Map</label>
-
-        <p class="map-help">
-            Click anywhere on the map to mark the exact
-            complaint location.
+        <p>
+            Help us build a better community. Report civic problems
+            in your area and let the concerned department take action.
         </p>
+    </div>
 
-        <div id="map"></div>
+    <div class="report-card">
 
-        <button
-            type="button"
-            class="location-btn"
-            id="current-location-btn"
+        <div class="report-card-heading">
+            <div>
+                <h2>Complaint Details</h2>
+                <p>Please provide the information below.</p>
+            </div>
+
+            <span class="required-note">* Required fields</span>
+        </div>
+
+        <form
+            method="post"
+            id="complaint-form"
+            enctype="multipart/form-data"
         >
-            Use My Current Location
-        </button>
 
-        <input type="hidden" id="latitude" name="latitude">
+            {% csrf_token %}
 
-        <input type="hidden" id="longitude" name="longitude">
+            <div class="form-group">
+                <label for="title">Complaint Title <span>*</span></label>
 
-        <p id="coordinate-status">
-            No location selected yet.
-        </p>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    maxlength="200"
+                    placeholder="Example: Large pothole near bus stop"
+                    required
+                >
+            </div>
 
-        <button type="submit">
-            Submit Complaint
-        </button>
+            <div class="form-group">
+                <label for="description">Describe the Problem <span>*</span></label>
 
-    </form>
+                <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Explain what happened and how it affects the public..."
+                    required
+                ></textarea>
+            </div>
 
-    {% if error %}
-        <p class="error">{{ error }}</p>
-    {% endif %}
+            <div class="form-group">
+                <label for="category">Complaint Category <span>*</span></label>
 
-</div>
+                <select id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    <option value="Road Damage">Road Damage</option>
+                    <option value="Waterlogging">Waterlogging</option>
+                    <option value="Garbage">Garbage</option>
+                    <option value="Streetlight">Streetlight</option>
+                    <option value="Drainage">Drainage</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
 
-<!-- Leaflet Map JavaScript -->
+            <div class="form-group">
+                <label for="location">Location or Address <span>*</span></label>
+
+                <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    maxlength="255"
+                    placeholder="Example: Near the main bus stop"
+                    required
+                >
+            </div>
+
+            <!-- Optional Image Upload -->
+            <div class="form-group">
+                <label for="image">Upload Complaint Image (Optional)</label>
+
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/jpeg,image/png,image/webp"
+                >
+
+                <p class="map-help">
+                    Upload a JPG, PNG, or WEBP image. Maximum size: 5 MB.
+                </p>
+
+                <img
+                    id="image-preview"
+                    alt="Selected complaint image preview"
+                    style="display:none; max-width:100%; max-height:250px; margin-top:12px; border-radius:10px;"
+                >
+            </div>
+
+            <div class="form-group map-group">
+
+                <label>Select Complaint Location on Map <span>*</span></label>
+
+                <p class="map-help">
+                    Click anywhere on the map to mark the exact
+                    location of the complaint.
+                </p>
+
+                <div id="map"></div>
+
+                <button
+                    type="button"
+                    class="location-btn"
+                    id="current-location-btn"
+                >
+                    ◎ Use My Current Location
+                </button>
+
+                <input type="hidden" id="latitude" name="latitude">
+
+                <input type="hidden" id="longitude" name="longitude">
+
+                <p id="coordinate-status">
+                    No location selected yet.
+                </p>
+
+            </div>
+
+            <button type="submit" class="report-submit">
+                Submit Complaint →
+            </button>
+
+        </form>
+
+        {% if error %}
+            <p class="report-error">{{ error }}</p>
+        {% endif %}
+
+    </div>
+
+    <p class="report-note">
+        Your complaint will be reviewed and assigned to the appropriate department.
+    </p>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 
-    // Initialize map
+document.addEventListener('DOMContentLoaded', function () {
+
     const map = L.map('map').setView([20.5937, 78.9629], 5);
 
-    // Load OpenStreetMap tiles
     L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
-            attribution: '&copy; OpenStreetMap contributors'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }
     ).addTo(map);
 
@@ -228,7 +190,6 @@
     const longitudeInput = document.getElementById('longitude');
     const coordinateStatus = document.getElementById('coordinate-status');
 
-    // Save selected coordinates
     function selectLocation(lat, lng) {
 
         latitudeInput.value = lat.toFixed(6);
@@ -249,8 +210,7 @@
             lng.toFixed(6);
     }
 
-    // Select location by clicking on map
-    map.on('click', function(event) {
+    map.on('click', function (event) {
 
         selectLocation(
             event.latlng.lat,
@@ -259,15 +219,12 @@
 
     });
 
-    // Detect current location
     document.getElementById('current-location-btn')
-        .addEventListener('click', function() {
+        .addEventListener('click', function () {
 
             if (!navigator.geolocation) {
-
                 alert('Geolocation is not supported by your browser.');
                 return;
-
             }
 
             coordinateStatus.textContent =
@@ -275,7 +232,7 @@
 
             navigator.geolocation.getCurrentPosition(
 
-                function(position) {
+                function (position) {
 
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
@@ -286,24 +243,66 @@
 
                 },
 
-                function(error) {
+                function () {
 
                     coordinateStatus.textContent =
                         'Unable to detect location. Please select it manually on the map.';
 
                     alert(
-                        'Location access failed. Please allow location permission or select a location on the map.'
+                        'Location access failed. Please allow location permission or select a location manually.'
                     );
 
+                },
+
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000
                 }
 
             );
 
         });
 
-    // Validate location before submission
+    // Image preview and client-side size validation
+    const imageInput = document.getElementById('image');
+    const imagePreview = document.getElementById('image-preview');
+
+    imageInput.addEventListener('change', function () {
+
+        const file = this.files[0];
+
+        imagePreview.style.display = 'none';
+        imagePreview.removeAttribute('src');
+
+        if (!file) {
+            return;
+        }
+
+        const allowedTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/webp'
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            alert('Please select a JPG, PNG, or WEBP image.');
+            this.value = '';
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Image size must not exceed 5 MB.');
+            this.value = '';
+            return;
+        }
+
+        imagePreview.src = URL.createObjectURL(file);
+        imagePreview.style.display = 'block';
+
+    });
+
     document.getElementById('complaint-form')
-        .addEventListener('submit', function(event) {
+        .addEventListener('submit', function (event) {
 
             if (!latitudeInput.value || !longitudeInput.value) {
 
@@ -315,7 +314,12 @@
 
         });
 
+    setTimeout(function () {
+        map.invalidateSize();
+    }, 200);
+
+});
+
 </script>
 
-</body>
-</html>
+{% endblock %}

@@ -1,139 +1,171 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complaint Submitted | CivicTrack AI</title>
+{% extends 'base.html' %}
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            margin: 0;
-            padding: 30px 15px;
-            color: #333;
-        }
+{% block content %}
+<div class="success-container">
 
-        .container {
-            max-width: 650px;
-            margin: 30px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .success {
-            text-align: center;
-            color: #16803c;
-        }
-
-        .tracking {
-            background: #eef4ff;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            overflow-wrap: anywhere;
-        }
-
-        .detail {
-            border-bottom: 1px solid #eee;
-            padding: 12px 0;
-        }
-
-        .label {
-            font-weight: bold;
-            color: #555;
-        }
-
-        .priority {
-            font-weight: bold;
-        }
-
-        .reason {
-            background: #fff8e7;
-            padding: 12px;
-            border-radius: 8px;
-        }
-
-        .button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 20px;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-    <div class="success">
-        <h1>✓ Complaint Submitted!</h1>
-        <p>Your complaint has been successfully registered.</p>
+    <div class="success-header">
+        <h1>Complaint Submitted Successfully!</h1>
+        <p>Your complaint has been recorded. You can use the tracking ID below to check its status.</p>
     </div>
 
-    <div class="tracking">
-        <p class="label">Your Complaint Tracking ID</p>
-        <strong>{{ complaint.tracking_id }}</strong>
-        <p>Save this ID to track your complaint.</p>
-    </div>
+    <div class="success-card">
 
-    <h2>AI Analysis Results</h2>
+        <h2>Complaint Details</h2>
 
-    <div class="detail">
-        <span class="label">Complaint Title:</span>
-        {{ complaint.title }}
-    </div>
-
-    <div class="detail">
-        <span class="label">Detected Category:</span>
-        {{ complaint.category }}
-    </div>
-
-    <div class="detail">
-        <span class="label">AI Summary:</span>
-        {{ complaint.ai_summary }}
-    </div>
-
-    <div class="detail">
-        <span class="label">Priority:</span>
-        <span class="priority">{{ complaint.priority }}</span>
-    </div>
-
-    <div class="reason">
-        <span class="label">Why this priority?</span>
-        <p>{{ complaint.priority_reason }}</p>
-    </div>
-
-    <div class="detail">
-        <span class="label">Assigned Department:</span>
-        {{ complaint.assigned_department|default:"Not assigned yet" }}
-    </div>
-
-    {% if complaint.duplicate_of %}
-        <div class="reason">
-            <strong>Possible Duplicate Detected</strong>
-            <p>This complaint may be similar to an existing complaint.</p>
-            <p>Related Tracking ID: {{ complaint.duplicate_of.tracking_id }}</p>
-        </div>
-    {% else %}
         <div class="detail">
-            <span class="label">Duplicate Check:</span>
-            No likely duplicate found.
+            <strong>Tracking ID:</strong>
+            <p>{{ complaint.tracking_id }}</p>
         </div>
-    {% endif %}
 
-    <a href="/track/" class="button">Track Your Complaint</a>
+        <div class="detail">
+            <strong>Title:</strong>
+            <p>{{ complaint.title }}</p>
+        </div>
 
-    <a href="/report/" class="button">Submit Another Complaint</a>
+        <div class="detail">
+            <strong>Description:</strong>
+            <p>{{ complaint.description }}</p>
+        </div>
 
+        <div class="detail">
+            <strong>Category:</strong>
+            <p>{{ complaint.category }}</p>
+        </div>
+
+        <div class="detail">
+            <strong>Location:</strong>
+            <p>{{ complaint.location }}</p>
+        </div>
+
+        {% if complaint.image %}
+        <div class="complaint-image">
+            <h3>Uploaded Complaint Image</h3>
+            <img
+                src="{{ complaint.image.url }}"
+                alt="Uploaded complaint evidence"
+                style="max-width: 100%; max-height: 350px; object-fit: contain; border-radius: 12px;"
+            >
+        </div>
+        {% else %}
+        <p>No image was uploaded for this complaint.</p>
+        {% endif %}
+
+        <hr>
+
+        <h2>AI Analysis</h2>
+
+        <div class="detail">
+            <strong>AI Summary:</strong>
+            <p>{{ complaint.ai_summary }}</p>
+        </div>
+
+        <div class="detail">
+            <strong>Priority:</strong>
+            <p>{{ complaint.priority }}</p>
+        </div>
+
+        <div class="detail">
+            <strong>Priority Explanation:</strong>
+            <p>{{ complaint.priority_reason }}</p>
+        </div>
+
+        <div class="detail">
+            <strong>Assigned Department:</strong>
+            <p>{{ complaint.assigned_department }}</p>
+        </div>
+
+        <div class="detail">
+            <strong>Status:</strong>
+            <p>{{ complaint.status }}</p>
+        </div>
+
+        {% if complaint.duplicate_of %}
+        <p>This complaint may be a duplicate of another report.</p>
+        {% else %}
+        <p>No matching duplicate complaint was identified.</p>
+        {% endif %}
+
+        <a href="{% url 'track_complaint' %}" class="track-button">
+            Track Your Complaint
+        </a>
+
+        <a href="{% url 'home' %}" class="home-button">
+            Back to Home
+        </a>
+
+    </div>
 </div>
 
-</body>
-</html>
+<style>
+.success-container {
+    max-width: 750px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.success-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.success-header h1 {
+    color: #16804a;
+}
+
+.success-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.success-card h2 {
+    color: #16804a;
+    margin-bottom: 18px;
+}
+
+.detail {
+    margin-bottom: 15px;
+}
+
+.detail strong {
+    display: block;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.detail p {
+    color: #555;
+    overflow-wrap: anywhere;
+}
+
+.complaint-image {
+    margin: 25px 0;
+}
+
+.complaint-image h3 {
+    margin-bottom: 12px;
+}
+
+.complaint-image img {
+    display: block;
+    width: 100%;
+}
+
+.track-button,
+.home-button {
+    display: inline-block;
+    margin: 15px 8px 0 0;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    background: #16804a;
+}
+
+.home-button {
+    background: #555;
+}
+</style>
+{% endblock %}

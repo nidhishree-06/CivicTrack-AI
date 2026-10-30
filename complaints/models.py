@@ -1,7 +1,6 @@
+
 from django.db import models
-
 import uuid
-
 
 
 class Complaint(models.Model):
@@ -39,6 +38,12 @@ class Complaint(models.Model):
 
     description = models.TextField()
 
+    image = models.ImageField(
+        upload_to='complaint_images/',
+        null=True,
+        blank=True
+    )
+
     category = models.CharField(
         max_length=50,
         choices=CATEGORY_CHOICES,
@@ -64,6 +69,7 @@ class Complaint(models.Model):
     )
 
     ai_summary = models.TextField(blank=True)
+
     priority_reason = models.TextField(blank=True)
 
     assigned_department = models.CharField(
@@ -85,4 +91,3 @@ class Complaint(models.Model):
 
     def __str__(self):
         return self.title
-

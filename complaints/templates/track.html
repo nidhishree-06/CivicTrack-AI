@@ -1,301 +1,155 @@
+```html
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block title %}Track Complaint | CivicTrack AI{% endblock %}
 
-    <title>Track Complaint | CivicTrack AI</title>
+{% block content %}
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<div class="tracking-page">
 
-        body {
-            margin: 0;
-            padding: 35px 15px;
-            background: #f1f5f9;
-            font-family: Arial, sans-serif;
-            color: #1e293b;
-        }
+    <div class="tracking-heading">
+        <span class="tracking-tag">COMPLAINT TRACKING</span>
+        <h1>Track Your Complaint</h1>
+        <p>Stay updated on your complaint and follow its progress.</p>
+    </div>
 
-        .container {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            padding: 35px;
-            border-radius: 14px;
-            box-shadow: 0 5px 20px #00000010;
-        }
+    <div class="tracking-search-card">
+        <div class="tracking-search-icon">🔎</div>
+        <h2>Find Your Complaint</h2>
+        <p>Enter the tracking ID you received after submitting your complaint.</p>
 
-        h1 {
-            color: #123b65;
-            text-align: center;
-        }
+        <form method="post">
+            {% csrf_token %}
 
-        .description {
-            text-align: center;
-            color: #64748b;
-        }
+            <label for="tracking_id">Complaint Tracking ID</label>
 
-        label {
-            display: block;
-            font-weight: bold;
-            margin: 25px 0 10px;
-        }
+            <input
+                type="text"
+                id="tracking_id"
+                name="tracking_id"
+                placeholder="Example: CT-XXXXXXXX"
+                required
+            >
 
-        input {
-            width: 100%;
-            padding: 13px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            font-size: 15px;
-        }
+            <button type="submit" class="tracking-button">
+                Track Complaint →
+            </button>
+        </form>
 
-        button {
-            width: 100%;
-            padding: 13px;
-            margin-top: 15px;
-            background: #1769d2;
-            color: white;
-            border: none;
-            border-radius: 7px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #1255ad;
-        }
-
-        .result {
-            margin-top: 30px;
-            padding: 22px;
-            background: #f8fafc;
-            border-radius: 10px;
-        }
-
-        .result p {
-            line-height: 1.6;
-            overflow-wrap: anywhere;
-        }
-
-        .status {
-            display: inline-block;
-            padding: 7px 13px;
-            background: #dbeafe;
-            color: #1d4ed8;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-
-        .error {
-            color: #dc2626;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .timeline {
-            margin: 30px 0;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-        }
-
-        .timeline h2 {
-            color: #123b65;
-        }
-
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            position: relative;
-            padding-bottom: 28px;
-        }
-
-        .step:last-child {
-            padding-bottom: 0;
-        }
-
-        .circle {
-            width: 30px;
-            height: 30px;
-            min-width: 30px;
-            border-radius: 50%;
-            background: #cbd5e1;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            position: relative;
-            z-index: 1;
-        }
-
-        .step.completed .circle {
-            background: #16a34a;
-        }
-
-        .step.current .circle {
-            background: #2563eb;
-        }
-
-        .step:not(:last-child)::after {
-            content: "";
-            position: absolute;
-            left: 14px;
-            top: 30px;
-            height: calc(100% - 30px);
-            width: 2px;
-            background: #cbd5e1;
-        }
-
-        .step.completed:not(:last-child)::after {
-            background: #16a34a;
-        }
-
-        .step h3 {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-
-        .step p {
-            margin: 5px 0;
-            color: #64748b;
-            font-size: 13px;
-        }
-
-        .back {
-            display: block;
-            text-align: center;
-            margin-top: 25px;
-            color: #1769d2;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-    <h1>Track Your Complaint</h1>
-
-    <p class="description">
-        Enter your tracking ID to check the latest status
-        of your civic complaint.
-    </p>
-
-    <form method="post">
-        {% csrf_token %}
-
-        <label for="tracking_id">Complaint Tracking ID</label>
-
-        <input
-            type="text"
-            id="tracking_id"
-            name="tracking_id"
-            placeholder="Enter your tracking ID"
-            required
-        >
-
-        <button type="submit">Track Complaint</button>
-    </form>
-
-    {% if error %}
-        <p class="error">{{ error }}</p>
-    {% endif %}
+        {% if error %}
+            <p class="tracking-error">{{ error }}</p>
+        {% endif %}
+    </div>
 
     {% if complaint %}
 
-        <div class="result">
+        <div class="tracking-result-card">
 
-            <h2>Complaint Details</h2>
+            <div class="result-heading">
+                <div>
+                    <span class="result-label">TRACKING RESULTS</span>
+                    <h2>Complaint Details</h2>
+                </div>
+                <span class="status-pill">{{ complaint.status }}</span>
+            </div>
 
-            <p><strong>Tracking ID:</strong>
-                {{ complaint.tracking_id }}</p>
+            <div class="tracking-details-grid">
 
-            <p><strong>Title:</strong>
-                {{ complaint.title }}</p>
+                <div class="tracking-detail">
+                    <span>Tracking ID</span>
+                    <strong>{{ complaint.tracking_id }}</strong>
+                </div>
 
-            <p><strong>Description:</strong>
-                {{ complaint.description }}</p>
+                <div class="tracking-detail">
+                    <span>Complaint Title</span>
+                    <strong>{{ complaint.title }}</strong>
+                </div>
 
-            <p><strong>Category:</strong>
-                {{ complaint.category }}</p>
+                <div class="tracking-detail">
+                    <span>Category</span>
+                    <strong>{{ complaint.category }}</strong>
+                </div>
 
-            <p><strong>Location:</strong>
-                {{ complaint.location }}</p>
+                <div class="tracking-detail">
+                    <span>Priority</span>
+                    <strong>{{ complaint.priority }}</strong>
+                </div>
 
-            <p><strong>Priority:</strong>
-                {{ complaint.priority }}</p>
+                <div class="tracking-detail">
+                    <span>Assigned Department</span>
+                    <strong>{{ complaint.assigned_department|default:"Not assigned yet" }}</strong>
+                </div>
 
-            <p><strong>Department:</strong>
-                {{ complaint.assigned_department|default:"Not assigned yet" }}</p>
+                <div class="tracking-detail">
+                    <span>Location</span>
+                    <strong>{{ complaint.location }}</strong>
+                </div>
 
-            <p><strong>Current Status:</strong>
-                <span class="status">{{ complaint.status }}</span>
-            </p>
+                <div class="tracking-detail full-width">
+                    <span>Description</span>
+                    <p>{{ complaint.description }}</p>
+                </div>
 
-            <p><strong>Last Updated:</strong>
-                {{ complaint.updated_at|date:"d M Y, h:i A" }}</p>
+                <div class="tracking-detail full-width">
+                    <span>Last Updated</span>
+                    <strong>{{ complaint.updated_at|date:"d M Y, h:i A" }}</strong>
+                </div>
 
+            </div>
         </div>
 
-        <div class="timeline">
+        <div class="progress-card">
 
-            <h2>Complaint Progress</h2>
-
-            {% with status=complaint.status %}
-            {% with stages="Submitted,Assigned,In Progress,Resolved" %}
-
-                {% for stage in stages.split %}
-                {% endfor %}
-
-            {% endwith %}
-            {% endwith %}
-
-            <div class="step {% if complaint.status == 'Submitted' or complaint.status == 'Assigned' or complaint.status == 'In Progress' or complaint.status == 'Resolved' %}completed{% endif %}">
-                <div class="circle">1</div>
-                <div>
-                    <h3>Complaint Submitted</h3>
-                    <p>Your complaint has been registered.</p>
-                </div>
+            <div class="progress-heading">
+                <span class="result-label">LIVE PROGRESS</span>
+                <h2>Complaint Progress</h2>
+                <p>Follow the stages of your complaint resolution.</p>
             </div>
 
-            <div class="step {% if complaint.status == 'Assigned' %}current{% elif complaint.status == 'In Progress' or complaint.status == 'Resolved' %}completed{% endif %}">
-                <div class="circle">2</div>
-                <div>
-                    <h3>Assigned</h3>
-                    <p>Your complaint has been assigned for further action.</p>
-                </div>
-            </div>
+            <div class="progress-timeline">
 
-            <div class="step {% if complaint.status == 'In Progress' %}current{% elif complaint.status == 'Resolved' %}completed{% endif %}">
-                <div class="circle">3</div>
-                <div>
-                    <h3>In Progress</h3>
-                    <p>The concerned department is working on the issue.</p>
+                <div class="progress-step {% if complaint.status == 'Submitted' %}current{% elif complaint.status == 'Assigned' or complaint.status == 'In Progress' or complaint.status == 'Resolved' %}completed{% endif %}">
+                    <div class="progress-circle">1</div>
+                    <div class="progress-info">
+                        <h3>Complaint Submitted</h3>
+                        <p>Your complaint has been successfully registered.</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="step {% if complaint.status == 'Resolved' %}completed current{% endif %}">
-                <div class="circle">4</div>
-                <div>
-                    <h3>Resolved</h3>
-                    <p>Your complaint has been resolved.</p>
+                <div class="progress-step {% if complaint.status == 'Assigned' %}current{% elif complaint.status == 'In Progress' or complaint.status == 'Resolved' %}completed{% endif %}">
+                    <div class="progress-circle">2</div>
+                    <div class="progress-info">
+                        <h3>Assigned to Department</h3>
+                        <p>Your complaint has been assigned for further action.</p>
+                    </div>
                 </div>
-            </div>
 
+                <div class="progress-step {% if complaint.status == 'In Progress' %}current{% elif complaint.status == 'Resolved' %}completed{% endif %}">
+                    <div class="progress-circle">3</div>
+                    <div class="progress-info">
+                        <h3>Work in Progress</h3>
+                        <p>The concerned department is working on the issue.</p>
+                    </div>
+                </div>
+
+                <div class="progress-step {% if complaint.status == 'Resolved' %}completed current{% endif %}">
+                    <div class="progress-circle">4</div>
+                    <div class="progress-info">
+                        <h3>Complaint Resolved</h3>
+                        <p>Your complaint has been resolved successfully.</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
     {% endif %}
 
-    <a href="/" class="back">Return to Homepage</a>
+    <div class="tracking-back">
+        <a href="/">← Back to Homepage</a>
+    </div>
 
 </div>
 
-</body>
-</html>
+{% endblock %}
+```

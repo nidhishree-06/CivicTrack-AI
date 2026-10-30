@@ -1,0 +1,66 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}CivicTrack AI | Smart Civic Solutions{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'complaints/style.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+
+        <a href="/" class="brand">
+            🌿 CivicTrack <span>AI</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/report/">Report Complaint</a>
+            <a href="/track/">Track Complaint</a>
+            <a href="/dashboard/">Dashboard</a>
+            <a href="/admin/" class="login">Authority Login</a>
+        </nav>
+
+    </header>
+
+    <!-- Page Content -->
+    <main class="main-content">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+
+        <h3>🌿 CivicTrack AI</h3>
+
+        <p>Smart Citizen Complaint Management System</p>
+
+        <p>Building better communities through technology.</p>
+
+        <p class="copyright">
+            © 2026 CivicTrack AI. All rights reserved.
+        </p>
+
+    </footer>
+
+    <!-- Page-specific JavaScript -->
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>
